@@ -39,7 +39,7 @@ class company(models.Model):
     abt = models.CharField(max_length=100)
     paid = models.CharField(max_length=100)
     gstno =models.CharField(max_length=100, default='',null=True)
-
+    cash=models.IntegerField(default=0)
 class customer(models.Model):
     customerid = models.AutoField(('CUSTID'), primary_key=True)
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
@@ -1722,31 +1722,30 @@ class challanitem(models.Model):
 #muhammed ashiq
 
 
-class banking_G(models.Model):
+class bankings_G(models.Model):
     bankname = models.CharField(max_length=100)
     ifsccode = models.CharField(max_length=20)
     branchname = models.CharField(max_length=100)
     openingbalance = models.IntegerField()
     date = models.DateField()
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
-    balance=models.IntegerField()
-    cash_balance=models.IntegerField()
-
-class bank_transaction(models.Model):
-    bank=models.TextField(max_length=100)
+    balance=models.IntegerField(default=0)
+    cash_balance=models.IntegerField(default=0)
+    
+    
+    
+class bank_transactions(models.Model):
+    bank_type=models.TextField(max_length=100)
     from_trans=models.TextField(max_length=100)
     to_trans=models.TextField(max_length=100)
     amount = models.IntegerField(blank=True,null=True)
     adj_date=models.DateField(blank=True,null=True)
     desc=models.TextField(max_length=100)
     type=models.TextField(max_length=100)
-    banking=models.ForeignKey(banking_G, on_delete=models.CASCADE)
-    cid = models.ForeignKey(company, on_delete=models.CASCADE)
-    
-
-class cash_hand(models.Model):
     cash_adjust=models.TextField(max_length=100)
     cash_cash=models.IntegerField(blank=True,null=True)
     cash_description=models.TextField(max_length=100)
     cash_date=models.DateField(blank=True,null=True)
+    banking=models.ForeignKey(bankings_G, on_delete=models.CASCADE ,null=True,blank=True)
+    cid = models.ForeignKey(company, on_delete=models.CASCADE)
 

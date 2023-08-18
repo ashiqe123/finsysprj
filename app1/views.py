@@ -37857,7 +37857,7 @@ def bnnk(request):
         else:
             return redirect('/')
     cmp1 = company.objects.get(id=request.session["uid"])
-    bank = banking_G.objects.filter(cid=cmp1)
+    bank = bankings_G.objects.filter(cid=cmp1)
     
     context={'bank':bank,'cmp1':cmp1}
     return render(request,'app1/bnk.html',context)
@@ -37876,15 +37876,15 @@ def crt_bank(request):
         branch = request.POST.get('branch')
         opening_balance = request.POST.get('Opening')
         date = request.POST.get('date')
-        bank = banking_G(bankname=bname, ifsccode=ifsc, branchname=branch, openingbalance=opening_balance, date=date,cid=cmp1,balance=opening_balance)
+        bank = bankings_G(bankname=bname, ifsccode=ifsc, branchname=branch, openingbalance=opening_balance, date=date,cid=cmp1,balance=opening_balance)
         bank.save()
-        bnk=bank_transaction(
+        bnk=bank_transactions(
             from_trans=bname,
             amount=opening_balance,
             adj_date=date,
             type="OPENING BAL",
-            cid=cmp1,
             banking_id=bank.id,
+            cid=cmp1
         )
         bnk.save()
         
@@ -37900,9 +37900,9 @@ def view_bank(request,id):
         else:
             return redirect('/')
         cmp1 = company.objects.get(id=request.session["uid"])
-    bank=banking_G.objects.get(id=id)
-    bank_list=banking_G.objects.filter(cid=cmp1)
-    trans=bank_transaction.objects.filter(banking_id=id)
+    bank=bankings_G.objects.get(id=id)
+    bank_list=bankings_G.objects.filter(cid=cmp1)
+    trans=bank_transactions.objects.filter(banking_id=id)
     return render(request,'app1/view_bank.html',{"bank":bank,'bl':bank_list,'trans':trans})
 
 
@@ -37916,23 +37916,37 @@ def b_to_c(request):
         adj_date = request.POST.get('adjdate')
         desc = request.POST.get('desc')
 
-        bank = banking_G.objects.get(id=f_bank)
-        bank.balance -= amount
-        bank.save()
+        
 
-        trans = bank_transaction(
+        bank = bankings_G.objects.get(id=f_bank)
+        bank.balance -= amount
+        bank.cash_balance += amount
+        bank.save()
+        
+        cmp1.cash += amount
+        cmp1.save()
+
+        trans = bank_transactions(
             from_trans=bank.bankname,
             to_trans=to_trans,
             amount=amount,
             desc=desc,
             adj_date=adj_date,
             type='CASH WITHDRAW',
-            cid=cmp1,
+            
             banking_id=bank.id,
-            bank='TO CASH'
+            bank_type='FROM ' + bank.bankname ,
+            cash_adjust='ADD CASH',
+            cash_cash=amount,
+            cash_description=desc,
+            cash_date=adj_date,
+            cid=cmp1
+
+            
+            
         )
         trans.save()
-
+        
     return redirect('bnnk')
 
 def c_to_b(request):
@@ -37944,11 +37958,13 @@ def c_to_b(request):
         adj_date = request.POST.get('adjdate')
         desc = request.POST.get('desc')
 
-        bank = banking_G.objects.get(id=f_bank)
+        bank = bankings_G.objects.get(id=f_bank)
         bank.balance += amount
+        bank.cash_balance -= amount
         bank.save()
-
-        trans = bank_transaction(
+        cmp1.cash -= amount
+        cmp1.save()
+        trans = bank_transactions(
             from_trans=to_trans,
             to_trans=bank.bankname,
             amount=amount,
@@ -37957,13 +37973,16 @@ def c_to_b(request):
             type='CASH DEPOSIT',
             cid=cmp1,
             banking_id=bank.id,
-            bank='FROM CASH'
+            bank_type='FROM ' + to_trans ,
+            cash_adjust='REDUCE CASH',
+            cash_cash=amount,
+            cash_description=desc,
+            cash_date=adj_date,
         )
         trans.save()
 
     return redirect('bnnk')
 
-from django.shortcuts import redirect
 
 def b_to_b(request):
     cmp1 = company.objects.get(id=request.session["uid"])
@@ -37974,15 +37993,15 @@ def b_to_b(request):
         adj_date = request.POST.get('adjdate')
         desc = request.POST.get('desc')
 
-        from_bank = banking_G.objects.get(id=f_bank_id)
-        to_bank = banking_G.objects.get(id=t_bank_id)
+        from_bank = bankings_G.objects.get(id=f_bank_id)
+        to_bank = bankings_G.objects.get(id=t_bank_id)
 
         # Deduct the amount from the source bank
         from_bank.balance -= amount
         from_bank.save()
 
         # Create a transaction record for the withdrawal from the source bank
-        trans_withdrawal = bank_transaction(
+        trans_withdrawal = bank_transactions(
             from_trans=from_bank.bankname,
             to_trans=to_bank.bankname,
             amount=amount,
@@ -38001,7 +38020,7 @@ def b_to_b(request):
         to_bank.save()
 
         # Create a transaction record for the deposit to the target bank
-        trans_deposit = bank_transaction(
+        trans_deposit = bank_transactions(
             from_trans=from_bank.bankname,
             to_trans=to_bank.bankname,
             amount=amount,
@@ -38027,14 +38046,14 @@ def b_adj(request):
         adj_date = request.POST.get('adjdate')
         desc = request.POST.get('desc')
         
-        bank = banking_G.objects.get(id=f_bank_id)
+        bank = bankings_G.objects.get(id=f_bank_id)
         
         if typ == 'Increase Balance':
             cmp1 = company.objects.get(id=request.session["uid"])
             bank.balance += amount
             bank.save()
             
-            trans = bank_transaction(
+            trans = bank_transactions(
                 from_trans=bank.bankname,
                 to_trans=bank.bankname,
                 amount=amount,
@@ -38052,7 +38071,7 @@ def b_adj(request):
             bank.balance -= amount
             bank.save()
             
-            trans = bank_transaction(
+            trans = bank_transactions(
                 from_trans=bank.bankname,
                 to_trans=bank.bankname,
                 amount=amount,
@@ -38081,7 +38100,7 @@ def edit_bank(request,id):
         branch = request.POST.get('branch')
         opening_balance = request.POST.get('Opening')
         date = request.POST.get('date')
-        bnk=banking_G.objects.get(id=id)
+        bnk=bankings_G.objects.get(id=id)
         bnk.bankname=bname
         bnk.ifsccode=ifsc
         bnk.branchname=branch
@@ -38093,7 +38112,10 @@ def edit_bank(request,id):
 
 
 def delete(request,id):
-    bk=banking_G.objects.get(id=id)
+    cmp1 = company.objects.get(id=request.session["uid"])
+    bk=bankings_G.objects.get(id=id)
+    cmp1.cash -= bk.cash_balance
+    cmp1.save()
     bk.delete()
     return redirect('bnnk')
 
@@ -38110,8 +38132,8 @@ def edit_b_to_c(request,id):
         desc = request.POST.get('desc')
 
         # Retrieve the record to be edited
-        record = bank_transaction.objects.get(id=id)
-        bnk = banking_G.objects.get(id=bank_id)
+        record = bank_transactions.objects.get(id=id)
+        bnk = bankings_G.objects.get(id=bank_id)
 
         # Update the record fields
         record.from_trans = bnk.bankname
@@ -38167,9 +38189,9 @@ def update_bank_transfer(request, transfer_id):
     if request.method == 'POST':
         fbank_id = request.POST.get('fbank')
         tbank_id = request.POST.get('tbank')
-        transfer = bank_transaction.objects.get(id=transfer_id)
-        fbank = banking_G.objects.get(id=fbank_id)
-        tbank = banking_G.objects.get(id=tbank_id)
+        transfer = bank_transactions.objects.get(id=transfer_id)
+        fbank = bankings_G.objects.get(id=fbank_id)
+        tbank = bankings_G.objects.get(id=tbank_id)
 
         amount = int(request.POST.get('amount'))
         adj_date = request.POST.get('adjdate')
@@ -38213,8 +38235,8 @@ def update_cash_to_bank_transfer(request,id):
         desc = request.POST.get('desc')
 
         # Retrieve the record to be edited
-        bnk=banking_G.objects.get(id=bank_id)
-        record = bank_transaction.objects.get(id=id)
+        bnk=bankings_G.objects.get(id=bank_id)
+        record = bank_transactions.objects.get(id=id)
         
 
         # Update the record fields
@@ -38232,20 +38254,25 @@ def update_cash_to_bank_transfer(request,id):
         return redirect('bnnk')  # Redirect to a success page
 
 def delet_bank(request,id):
-    bk=bank_transaction.objects.get(id=id)
+    bk=bank_transactions.objects.get(id=id)
     b_id=bk.banking
     amount_t=bk.amount
-    bnk=banking_G.objects.get(id=b_id.id)
-    bnk.balance-=amount_t
-    bnk.save()
+    bnk=bankings_G.objects.get(id=b_id.id)
+    if bk.type == 'CASH WITHDRAW':
+        bnk.balance+=amount_t
+        bnk.save()
+    else:
+        bnk.balance-=amount_t
+        bnk.save()
     bk.delete()
     
     return redirect('bnnk')
 
+
 def bnk_statement(request,id):
     cmp1 = company.objects.get(id=request.session["uid"])
-    bank=banking_G.objects.get(id=id)
-    bnk=bank_transaction.objects.filter(banking=bank.id)
+    bank=bankings_G.objects.get(id=id)
+    bnk=bank_transactions.objects.filter(banking=bank.id)
     context={
         'cmp1':cmp1,
         'bank':bank,
@@ -38257,8 +38284,11 @@ def bnk_statement(request,id):
 
 def cash_in_hand(request):
     cmp1 = company.objects.get(id=request.session["uid"])
+    bnk= bank_transactions.objects.filter(cid=cmp1)
+    
     context={
         'cmp1':cmp1,
+        'bnk':bnk,
         
      }
     return render(request,'app1/cash_in_hand.html',context)
@@ -38266,25 +38296,66 @@ def cash_in_hand(request):
 
 def add_cash(request):
     cmp1 = company.objects.get(id=request.session["uid"])
-
     if request.method == 'POST':
-        adj = request.POST.get('cashadj')
-        cash = request.POST.get('amount')
-        date = request.POST.get('date')
-        description = request.POST.get('desc')
-        
-        if adj == 'add':
-            cash_amount = cash 
-        elif adj == 'reduce':
-            cash_amount = -cash  
-        
-        add = cash_hand(
-            adjust=adj,
-            cash=cash_amount,
-            date=date,
-            description=description,
-            cid=cmp1,
+        cashadj=request.POST.get('cashadj')
+        amount=request.POST.get('amount')
+        adj_date=request.POST.get('date')
+        desc=request.POST.get('desc')
+        bnk=bank_transactions(
+            cash_adjust=cashadj,
+            cash_cash=amount,
+            cash_description=desc,
+            cash_date=adj_date,
+            cid=cmp1
         )
-        add.save()
-
+        if cashadj == 'ADD CASH':
+            cmp1.cash += int(amount)
+            cmp1.save()
+        else :
+            cmp1.cash -= int(amount)
+            cmp1.save()
+        bnk.save()
+        
     return redirect('cash_in_hand')
+
+
+def delet_bnk(request,id):
+    cmp1 = company.objects.get(id=request.session["uid"])
+
+    bk=bank_transactions.objects.get(id=id)
+    
+    amount_t=bk.amount
+    if bk.banking is None:
+        cmp1.cash -= bk.cash_cash
+        cmp1.save()
+
+    else:
+        bnk=bankings_G.objects.get(id=b_id.id)
+        b_id=bk.banking
+        if bk.type == 'CASH WITHDRAW':
+            bnk.balance-=amount_t
+            bnk.save()
+            cmp1.cash+=amount_t
+            cmp1.save()
+        else:
+            bnk.balance+=amount_t
+            bnk.save()
+            cmp1.cash-=amount_t
+            cmp1.save()
+    bk.delete()
+    if bank_transactions.DoesNotExist:
+        cmp1.cash = 0
+        cmp1.save()
+    return redirect('cash_in_hand')
+
+
+def cash_statement(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    
+    bnk=bank_transactions.objects.filter(cid=cmp1)
+    context={
+        'cmp1':cmp1,
+        'bnk':bnk,
+
+    }
+    return render(request,'app1/cash_statement.html',context)

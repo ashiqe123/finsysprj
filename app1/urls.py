@@ -887,6 +887,10 @@ urlpatterns = [
     path('delet_bank/<int:id>',views.delet_bank,name='delet_bank'),
     path('bnk_statement/<int:id>',views.bnk_statement,name='bnk_statement'),
     path('add_cash',views.add_cash,name='add_cash'),
+    path('cash_in_hand',views.cash_in_hand,name='cash_in_hand'),
+    path('delet_bnk/<int:id>',views.delet_bnk,name='delet_bnk'),
+    path('cash_statement',views.cash_statement,name='cash_statement'),
+
 
 
 
