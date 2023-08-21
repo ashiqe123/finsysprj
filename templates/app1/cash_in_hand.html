@@ -29,33 +29,35 @@
                                 <button class="btn btn-search-back" type="button"><i class="bx bx-arrow-back"></i></button>
                             </div>
                             <input class="form-control" type="search" id="searchInput" placeholder="Search" aria-label="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-search" type="button"><i class="lni lni-search-alt"></i></button>
+                            </div>
+                           
+                    
+                                </div>
+                            </div>
+                          </div>
+                          <div class="dropdown">
+                            <button type="button" class="btn btn-outline-info dropdown-toggle text-grey"
+                                    data-toggle="dropdown">Filter by
+                            </button>
+                            <div class="dropdown-menu" style="background-color: black;">
+    <a class="dropdown-item" href="javascript:void(0);" onclick="sortTable(0, 'asc')"
+       style="height: 40px; font-size: 15px; color: white;">Name Ascending</a>
+    <a class="dropdown-item" href="javascript:void(0);" onclick="sortTable(0, 'desc')"
+       style="height: 40px; font-size: 15px; color: white;">Name Descending</a>
+</div>
+
                         </div>
-                    </div>
-                </div>
+    
                   <div class="col">
                     <button type="button" class="btn btn-outline-info  text-grey"><a href="{% url 'cash_statement' %}">STATEMENT</a>
             </button>
                     
                   </div>
                  
-                  <div class="col">
-                    <div class="dropdown">
-                        <button type="button" class="btn btn-outline-info dropdown-toggle text-grey"
-                                data-toggle="dropdown">Sort by
-                        </button>
-                        <div class="dropdown-menu" style="background-color: black;">
-                            <a class="dropdown-item" href=""
-                               style="height: 40px; font-size: 15px; color: white;">type</a>
-                            <a class="dropdown-item" href=""
-                               style="height: 40px; font-size: 15px; color: white;">name</a>
-                            <a class="dropdown-item" href=""
-                               style="height: 40px; font-size: 15px; color: white;">date</a>
-                            <a class="dropdown-item" href=""
-                               style="height: 40px; font-size: 15px; color: white;">amount</a>
-                            
-                        </div>
-                </div>
-            </div>
+                  
+                
             <div class="col">
                 <div class="dropdown">
                     <button type="button" class="btn btn-outline-info text-grey" data-toggle="modal" data-target="#addBankModal">
@@ -71,14 +73,12 @@
             <div class="table-responsive">
                 <table class="table table-responsive-md table-hover mt-4" id="tabletobe">
                     <thead>
-                    <tr>
-                        <th>TYPE</th>
-                        <th>NAME</th>
+                        <th >TYPE</th>
+                        <th >NAME</th>
                         <th>DATE</th>
-                        <th>DESCRIPTION</th>
-                        <th>BALANCE</th>
+                        <th >DESCRIPTION</th>
+                        <th >BALANCE</th>
                         <th>ACTION</th>
-                    </tr>
                     </thead>
                     <tbody>
                    
@@ -122,7 +122,18 @@
                             {% endif %}
                 {% endif %}
                         </tr>
-                       
+    
+   
+<script>
+
+
+    $(document).ready(function () {
+        $(".edit-item").on("click", function () {
+            $("#editModal").modal("show");
+        });
+    });
+</script>
+
                         <div class="modal fade" id="deleteModal{{ a.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
@@ -254,8 +265,58 @@
         </div>
     </div>
 </div>
-{% endblock %}
+
+
+
+
 <script>
+   function sortTable(n, sortOrder) {
+    var table, rows, switching, i, x, y, shouldSwitch, switchcount = 0;
+    table = document.getElementById("tabletobe");
+
+    if (!table) {
+        console.error("Table not found.");
+        return;
+    }
+
+    rows = table.getElementsByTagName("TR");
+    switching = true;
+
+    while (switching) {
+        switching = false;
+
+        // Start loop from index 1 to skip the header row
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+
+            if (x && y) { // Check if x and y are defined
+                var xValue = x.innerHTML.toLowerCase();
+                var yValue = y.innerHTML.toLowerCase();
+
+                if ((sortOrder === "asc" && xValue > yValue) ||
+                    (sortOrder === "desc" && xValue < yValue)) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount++;
+        } else {
+            if (switchcount === 0 && sortOrder === "asc") {
+                sortOrder = "desc";
+                switching = true;
+            }
+        }
+    }
+}
+
+    // Search functionality
     const searchInput = document.getElementById('searchInput');
     const tableRows = document.querySelectorAll('#tabletobe tbody tr');
 
@@ -273,11 +334,9 @@
                 }
             });
 
-            if (foundMatch) {
-                row.style.display = 'table-row';
-            } else {
-                row.style.display = 'none';
-            }
+            row.style.display = foundMatch ? 'table-row' : 'none';
         });
     });
-</script>    
+</script>
+
+{% endblock %}
