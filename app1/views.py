@@ -38427,3 +38427,7 @@ def edit_add_cash(request,id):
         item.save()
 
     return redirect('cash_in_hand')
+
+
+def loan(request):
+    return render(request,'app1/loan_view.html')

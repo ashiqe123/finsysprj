@@ -891,6 +891,7 @@ urlpatterns = [
     path('delet_bnk/<int:id>',views.delet_bnk,name='delet_bnk'),
     path('cash_statement',views.cash_statement,name='cash_statement'),
     path('edit_add_cash/<int:id>',views.edit_add_cash,name='edit_add_cash'),
+    path('loan',views.loan,name='loan'),
 
 
 
