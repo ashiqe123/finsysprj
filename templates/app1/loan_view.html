@@ -9,6 +9,52 @@
                 <center><h2 class="mt-3">LOAN ACCOUNT</h2></center>
                 
                 <hr style="width:95%">
+                <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(0,0,0,.01);font-size: xx-small;">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarScroll">
+                        <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                          <li class="nav-item active" >
+                            <a class="nav-link text-light btn" role="button" onclick="window.print()"><i class="fa fa-print">Print</i><span class="sr-only">(current)</span></a>
+                          </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light btn" href="#" id="navbarDropdown" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-share-alt">Share</i> 
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item">&nbsp;</a>
+                                    <a class="dropdown-item" href="#">&nbsp;</a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light btn" id="navbarDropdown" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-exchange">Convert</i>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="">Approved</a>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light btn" role="button" href="">
+                                    <i class="fa fa-file-pdf-o">Pdf</i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link"></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light btn" role="button" href=""><i class=" fa fa-pencil">Edit</i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light btn" role="button" href=""><i class="fa fa-trash-o delete">Delete</i></a>
+                            </li>
+                            
+                        </ul>
+                    </div>
+                </nav>
             </div>
         </div>
     </div>
@@ -52,7 +98,7 @@
             <div class="col">
                 <div class="dropdown">
                     <button type="button" class="btn btn-outline-info text-grey" data-toggle="modal" data-target="#addBankModal">
-                        Add Loan Account
+                        Make payment
                     </button>
                 </div>
             </div>
@@ -104,19 +150,21 @@
                                             <form id="bankForm" method="post" action="">
                                                 {% csrf_token %}
                                                <div class="form-group">
+                                               <div class="row form-inline">
                                                 <div class="col-md-4">
-                                                    <label for="">BANK NAME</label>
+                                                    <label for="">ACCOUNT NAME</label>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="bname" value="" >
                                                 </div>
                             
                                                 <div class="col-md-4">
-                                                    <label for="">BANK IFSC CODE</label>
+                                                    <label for="">LENDER BANK</label>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="ifsc" value="" >
                                                 </div>
+                                               </div>
                             
                                                 <div class="col-md-4">
                                                     <label for="">BRANCH NAME</label>
@@ -124,18 +172,45 @@
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="branch" value="" >
                                                 </div>
+
                                                 <div class="col-md-4">
-                                                    <label for="">OPENING BALANCE</label>
+                                                    <label for="">DESCRIPTION</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input class="form-control" type="text" name="branch" value="" >
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="">ACCOUNT NUMBER</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input class="form-control" type="text" name="Opening" value="" >
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label for="">CURRENT BALANCE</label>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="Opening" value="" >
                                                 </div>
                             
                                                 <div class="col-md-4">
-                                                    <label for="">DATE</label>
+                                                    <label for="">BALANCE AS OF</label>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="date" name="date" value="{{a.date | date:'Y-m-d' }}" >
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="">LOAN RECIEVED</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input class="form-control" type="text" name="bname" value="" >
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label for="">INTREST</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input class="form-control" type="text" name="Opening" value="" >
                                                 </div>
                                                </div>
                                                <div class="modal-footer">
@@ -193,65 +268,95 @@
 </script>
 
     <!-- Modal HTML -->
-<div  class="modal fade" id="addBankModal" tabindex="-1" role="dialog" aria-labelledby="addBankModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content" style="background-color: #213b52;">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addBankModalLabel">Add Bank Modal</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="bankForm" method="post" action="{% url 'crt_bank' %}">
-                    {% csrf_token %}
-                   <div class="form-group">
-                    <div class="col-md-4">
-                        <label for="">BANK NAME</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="form-control" type="text" name="bname" >
-                    </div>
-
-                    <div class="col-md-4">
-                        <label for="">BANK IFSC CODE</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="form-control" type="text" name="ifsc" >
-                    </div>
-
-                    <div class="col-md-4">
-                        <label for="">BRANCH NAME</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="form-control" type="text" name="branch" >
-                    </div>
-                    <div class="col-md-4">
-                        <label for="">OPENING BALANCE</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="form-control" type="text" name="Opening" >
-                    </div>
-
-                    <div class="col-md-4">
-                        <label for="">DATE</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="form-control" type="date" name="date" >
-                    </div>
-                   </div>
-                   <div class="modal-footer">
-                    <button type="reset" class="btn btn-secondary" >Reset</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <input type="submit" class="btn btn-primary" value="Save">
+    <div class="modal fade" id="addBankModal" tabindex="-1" role="dialog" aria-labelledby="addBankModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background-color: #213b52;width: 100%;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addBankModalLabel">Add Bank Modal</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                </form>
-                
+                <div class="modal-body">
+                    <form id="bankForm" method="post" action="">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="row form-inline m-1">
+                                <div class="col-md-6">
+                                    <label for="">ACCOUNT NAME</label>
+                                    <input class="form-control" type="text" name="bname" value="">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="">LENDER BANK</label>
+                                    <input class="form-control" type="text" name="ifsc" value="">
+                                </div>
+                            </div>
+                            <div class="row form-inline m-1">
+                                <div class="col-md-6">
+                                    <label for="">ACCOUNT NUMBER</label>
+                                    <input class="form-control" type="text" name="bname" value="">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="">DESCRIPTION</label>
+                                    <input class="form-control" type="text" name="ifsc" value="">
+                                </div>
+                            </div>
+                            <div class="row form-inline m-1">
+                                <div class="col-md-6">
+                                    <label for="">CURRENT BALANCE</label>
+                                    <input class="form-control" type="text" name="bname" value="">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="">BALANCE AS OF</label>
+                                    <input class="form-control" type="text" name="ifsc" value="">
+                                </div>
+                            </div>
+                            <div class="row form-inline m-1">
+                                <div class="col-md-6">
+                                    <label for="">LOAN RECIEVED</label>
+                                    <input class="form-control" type="text" name="bname" value="">
+                                </div>
+                                
+                            </div>
+                            <div class="row form-inline m-1">
+                                <div class="col-md-6">
+                                    <label for="">INTREST RATE %</label>
+                                    <input class="form-control" type="text" name="bname" value="">
+                                </div>
+                                <div class="col-md-6">
+                                    <center><label for="">TERM</label></center>
+                                   <center>
+                                    <select  name="" class="form-control bg-dark text-white" id="">
+                                        <option class="form-control" value="MONTH">MONTH</option>
+                                        <option class="form-control" value="YEAR">YEAR</option>
+
+                                    </select>
+                                   </center>
+                                </div>
+                            </div>
+                            <div class="row form-inline m-1">
+                                <div class="col-md-6">
+                                    <label for="">PROCESSING FEE</label>
+                                    <input class="form-control" type="text" name="bname" value="">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="">PROCESSING PAID FROM</label>
+                                    <input class="form-control" type="text" name="ifsc" value="">
+                                </div>
+                            </div>
+                            <!-- Other fields... -->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="reset" class="btn btn-secondary">Reset</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <input type="submit" class="btn btn-primary" value="Save">
+                        </div>
+                    </form>
+                </div>
             </div>
-            
         </div>
     </div>
-</div>
+    
 
 <script>
     jQuery(document).ready(function($) {

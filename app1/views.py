@@ -38431,3 +38431,9 @@ def edit_add_cash(request,id):
 
 def loan(request):
     return render(request,'app1/loan_view.html')
+
+def loan_list(request):
+    return render(request,'app1/loan_view.html')
+
+def loan_statement(request):
+    return render(request,'app1/loan_statement.html')
