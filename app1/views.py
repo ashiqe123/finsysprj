@@ -38430,10 +38430,107 @@ def edit_add_cash(request,id):
 
 
 def loan(request):
-    return render(request,'app1/loan_view.html')
+    cmp1 = company.objects.get(id=request.session["uid"])
+    loan=loan_account.objects.filter(cid=cmp1)
+    bank=bankings_G.objects.filter(cid=cmp1)
+    context={
+        'cmp1':cmp1,
+        'loan':loan,
+        'bank':bank,
+    }
+    return render(request,'app1/loan_view.html',context)
+
+    
+def create_loan_account(request):
+    cid = company.objects.get(id=request.session["uid"])
+    if request.method == 'POST':
+        account_name = request.POST.get('acc_name')
+        account_number = request.POST.get('acc_number')
+        lenderbank = request.POST.get('lender')
+        received_bank = request.POST.get('recieved')
+        interest = request.POST.get('intrest')
+        term = request.POST.get('term')
+        loan_amount = request.POST.get('balance')  # You might need to adjust the field name
+        processing = request.POST.get('processing')
+        paid = request.POST.get('paid')
+        status = "Active"  # You can set a default value
+        desc = request.POST.get('desc')
+        date= request.POST.get('date')
+        balance = int(loan_amount) - int(processing)  # Calculate balance based on loan_amount and processing
+        
+        cid = company.objects.get(id=request.session["uid"])
+        lender=bankings_G.objects.get(id=lenderbank)
+        recieved=bankings_G.objects.get(id=received_bank)
+        paid=bankings_G.objects.get(id=paid)
+        loan = loan_account(
+            account_name=account_name,
+            account_number=account_number,
+            lenderbank=lender.bankname,
+            recieced_bank=recieved.bankname,
+            intrest=interest,
+            term=term,
+            loan_amount=loan_amount,
+            processing=processing,
+            paid=paid.bankname,
+            status=status,
+            desc=desc,
+            cid=cid,  # Assign the company ID
+            balance=balance,
+            date=date
+        )
+        loan.save()
+        l_id=loan_account.objects.get(id=loan.id)
+        trans = bank_transactions(
+            from_trans=lender.bankname,
+            to_trans=recieved.bankname,
+            loan_desc=desc,
+            type='LOAN ADJ',
+            cid=cid,
+            loan_amount=loan_amount,
+            loan_date=date ,
+            loan=l_id
+        )
+        trans.save()
+        bal=cid.cash-int(loan_amount)
+        if trans.from_trans == 'cash':
+            cid.cash = bal
+            cid.save()
+        else:
+            lender.balance = bal
+            lender.save()
+        
+        transaction = bank_transactions(
+            from_trans=lender.bankname,
+            to_trans=recieved.bankname,
+            cid=cid,
+            loan_desc=desc,
+            type='LOAN ADJ',
+            loan_amount=loan_amount,
+            loan_date=date ,
+            loan=l_id, 
+        )
+        transaction.save()
+        loan.balance -= int(processing)
+        loan.save()
+        print('DONE')
+    return redirect('loan')
+
+
+
+def delet_loan(request,id):
+    loan=loan_account.objects.get(id=id)
+    loan.delete()
+    return redirect('loan')
+
+
 
 def loan_list(request):
-    return render(request,'app1/loan_view.html')
+    cid = company.objects.get(id=request.session["uid"])
+    loan=loan_account.objects.filter(cid=cid)
+    return render(request,'app1/loan_list.html',{'cid':cid,'loan':loan})
+
+
+
 
 def loan_statement(request):
     return render(request,'app1/loan_statement.html')

@@ -9,52 +9,7 @@
                 <center><h2 class="mt-3">LOAN ACCOUNT</h2></center>
                 
                 <hr style="width:95%">
-                <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(0,0,0,.01);font-size: xx-small;">
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
-                      <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarScroll">
-                        <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-                          <li class="nav-item active" >
-                            <a class="nav-link text-light btn" role="button" onclick="window.print()"><i class="fa fa-print">Print</i><span class="sr-only">(current)</span></a>
-                          </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-light btn" href="#" id="navbarDropdown" role="button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fa fa-share-alt">Share</i> 
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item">&nbsp;</a>
-                                    <a class="dropdown-item" href="#">&nbsp;</a>
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-light btn" id="navbarDropdown" role="button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fa fa-exchange">Convert</i>
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="">Approved</a>
-                                </div>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light btn" role="button" href="">
-                                    <i class="fa fa-file-pdf-o">Pdf</i>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link"></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light btn" role="button" href=""><i class=" fa fa-pencil">Edit</i></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light btn" role="button" href=""><i class="fa fa-trash-o delete">Delete</i></a>
-                            </li>
-                            
-                        </ul>
-                    </div>
-                </nav>
+                
             </div>
         </div>
     </div>
@@ -98,7 +53,7 @@
             <div class="col">
                 <div class="dropdown">
                     <button type="button" class="btn btn-outline-info text-grey" data-toggle="modal" data-target="#addBankModal">
-                        Make payment
+                        Add Loan Account
                     </button>
                 </div>
             </div>
@@ -111,7 +66,8 @@
                 <table class="table table-responsive-md table-hover mt-4" id="tabletobe">
                     <thead>
                     <tr>
-                        <th id="nameList" >NAME</th>
+                        <th>ACCOUNT</th>
+                        <th>ACCOUNT NUMBER</th>
                         <th>LENDER</th>
                         
                         <th>BALANCE</th>
@@ -119,24 +75,27 @@
                     </tr>
                     </thead>
                     <tbody>
+                        {% for i in loan %}
                 <tr >
-                                <td class='clickable-row' data-href="view_bank/{{ a.id }}"></td>
-                                <td class='clickable-row' data-href="view_bank/{{ a.id }}"> </td>
-                                <td class='clickable-row' data-href="view_bank/{{ a.id }}"></td>
+                    
+                                <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{i.account_number}}</td>
+
+                                <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{i.account_name}}</td>
+                                <td class='clickable-row' data-href="view_bank/{{ a.id }}"> {{i.lenderbank}}</td>
+                                <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{i.balance}}</td>
                                 
                                 <td>
                                     <div class="dropdown">
                                         <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item edit-item" href="#" data-toggle="modal" data-target="#editModal{{ a.id }}">Edit</a>
-                                            <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
+                                            <a class="dropdown-item edit-item" href="#" data-toggle="modal" data-target="#editModal{{ i.id }}">Edit</a>
+                                            <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ i.id }}">Delete</a>
                                         </div>
                                     </div>
                                 </td>
                                 
-                                
+                        
                             </tr>
-
                             <div class="modal fade" id="editModal{{ a.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content" style="background-color: #213b52;">
@@ -155,14 +114,14 @@
                                                     <label for="">ACCOUNT NAME</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="bname" value="" >
+                                                    <input class="form-control" type="text" name="acc_name" value="" >
                                                 </div>
                             
                                                 <div class="col-md-4">
                                                     <label for="">LENDER BANK</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="ifsc" value="" >
+                                                    <input class="form-control" type="text" name="lender" value="" >
                                                 </div>
                                                </div>
                             
@@ -227,7 +186,7 @@
                            
                             <!-- Your existing table row -->
                         
-                            <div class="modal fade" id="deleteModal{{ a.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                            <div class="modal fade" id="deleteModal{{ i.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content" style="background-color: #213b52;">
                                         <div class="modal-header">
@@ -241,7 +200,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                            <a href="" class="btn btn-danger delete-confirm" >Delete</a>
+                                            <a href="{% url 'delet_loan' i.id %}" class="btn btn-danger delete-confirm" >Delete</a>
                                         </div>
                                     </div>
                                 </div>
@@ -249,7 +208,8 @@
                       
                   
                    
-                  
+                            {% endfor %}
+
                     </tbody>
                 </table>
             </div>
@@ -278,57 +238,68 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="bankForm" method="post" action="">
+                    <form id="bankForm" method="post" action="{% url 'create_loan_account' %}">
                         {% csrf_token %}
                         <div class="form-group">
                             <div class="row form-inline m-1">
                                 <div class="col-md-6">
                                     <label for="">ACCOUNT NAME</label>
-                                    <input class="form-control" type="text" name="bname" value="">
+                                    <input class="form-control bg-grey" type="text" name="acc_name" value="">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="">LENDER BANK</label>
-                                    <input class="form-control" type="text" name="ifsc" value="">
+                                    <select  name="lender" class="form-control  text-white" id="">
+                                        <option class="form-control bg-dark text-white" value="cash">CASH</option>
+                                        {% for i in bank %}
+                                        <option class="form-control bg-dark text-white" value="{{i.id}}">{{i.bankname}}</option>
+                                        {% endfor %}
+                                    </select> 
+                                                            
                                 </div>
                             </div>
                             <div class="row form-inline m-1">
                                 <div class="col-md-6">
                                     <label for="">ACCOUNT NUMBER</label>
-                                    <input class="form-control" type="text" name="bname" value="">
+                                    <input class="form-control" type="text" name="acc_number" value="">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="">DESCRIPTION</label>
-                                    <input class="form-control" type="text" name="ifsc" value="">
+                                    <input class="form-control" type="text" name="desc" value="">
                                 </div>
                             </div>
                             <div class="row form-inline m-1">
                                 <div class="col-md-6">
                                     <label for="">CURRENT BALANCE</label>
-                                    <input class="form-control" type="text" name="bname" value="">
+                                    <input class="form-control" type="text" name="balance" value="">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="">BALANCE AS OF</label>
-                                    <input class="form-control" type="text" name="ifsc" value="">
+                                    <input class="form-control" type="date" name="date" value="">
                                 </div>
                             </div>
                             <div class="row form-inline m-1">
                                 <div class="col-md-6">
-                                    <label for="">LOAN RECIEVED</label>
-                                    <input class="form-control" type="text" name="bname" value="">
+                                    <label for="">LOAN RECIEVED in</label>
+                                    <select  name="recieved" class="form-control  text-white" id="">
+                                        <option class="form-control bg-dark text-white" value="cash">CASH</option>
+                                        {% for i in bank %}
+                                        <option class="form-control bg-dark text-white" value="{{i.id}}">{{i.bankname}}</option>
+                                        {% endfor %}
+                                    </select>                                  
                                 </div>
                                 
                             </div>
                             <div class="row form-inline m-1">
                                 <div class="col-md-6">
                                     <label for="">INTREST RATE %</label>
-                                    <input class="form-control" type="text" name="bname" value="">
+                                    <input class="form-control" type="text" placeholder="%" name="intrest" value="%">
                                 </div>
                                 <div class="col-md-6">
                                     <center><label for="">TERM</label></center>
                                    <center>
-                                    <select  name="" class="form-control bg-dark text-white" id="">
-                                        <option class="form-control" value="MONTH">MONTH</option>
-                                        <option class="form-control" value="YEAR">YEAR</option>
+                                    <select  name="term" class="form-control  text-white" id="">
+                                        <option class="form-control bg-dark text-white" value="MONTH">MONTH</option>
+                                        <option class="form-control bg-dark text-white" value="YEAR">YEAR</option>
 
                                     </select>
                                    </center>
@@ -337,12 +308,17 @@
                             <div class="row form-inline m-1">
                                 <div class="col-md-6">
                                     <label for="">PROCESSING FEE</label>
-                                    <input class="form-control" type="text" name="bname" value="">
+                                    <input class="form-control" type="text" name="processing" value="">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="">PROCESSING PAID FROM</label>
-                                    <input class="form-control" type="text" name="ifsc" value="">
-                                </div>
+                                    <select  name="paid" class="form-control  text-white" id="">
+                                        <option class="form-control bg-dark text-white" value="cash">CASH</option>
+                                        {% for i in bank %}
+                                        <option class="form-control bg-dark text-white" value="{{i.id}}">{{i.bankname}}</option>
+                                        {% endfor %}
+                                    </select>                                 
+                                 </div>
                             </div>
                             <!-- Other fields... -->
                         </div>

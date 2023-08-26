@@ -894,6 +894,8 @@ urlpatterns = [
     path('loan',views.loan,name='loan'),
     path('loan_list',views.loan_list,name='loan_list'),
     path('loan_statement',views.loan_statement,name='loan_statement'),
+    path('create_loan_account',views.create_loan_account,name='create_loan_account'),
+    path('delet_loan/<int:id>',views.delet_loan,name='delet_loan')
 
 
 
