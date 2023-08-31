@@ -52,8 +52,8 @@
             </div>
             <div class="col">
                 <div class="dropdown">
-                    <button type="button" class="btn btn-outline-info text-grey" data-toggle="modal" data-target="#addBankModal">
-                        Add Loan Account
+                    <button type="button" class="btn btn-outline-info text-grey" >
+                       <a href="{% url 'create_loan' %}">Add Loan Account</a> 
                     </button>
                 </div>
             </div>
@@ -78,11 +78,11 @@
                         {% for i in loan %}
                 <tr >
                     
-                                <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{i.account_number}}</td>
+                                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.account_number}}</td>
 
-                                <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{i.account_name}}</td>
-                                <td class='clickable-row' data-href="view_bank/{{ a.id }}"> {{i.lenderbank}}</td>
-                                <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{i.balance}}</td>
+                                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.account_name}}</td>
+                                <td class='clickable-row' data-href="loan_list/{{ i.id }}"> {{i.lenderbank}}</td>
+                                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.balance}}</td>
                                 
                                 <td>
                                     <div class="dropdown">
@@ -96,7 +96,7 @@
                                 
                         
                             </tr>
-                            <div class="modal fade" id="editModal{{ a.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                            <div class="modal fade" id="editModal{{ i.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content" style="background-color: #213b52;">
                                         <div class="modal-header">
@@ -238,96 +238,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="bankForm" method="post" action="{% url 'create_loan_account' %}">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <div class="row form-inline m-1">
-                                <div class="col-md-6">
-                                    <label for="">ACCOUNT NAME</label>
-                                    <input class="form-control bg-grey" type="text" name="acc_name" value="">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="">LENDER BANK</label>
-                                    <select  name="lender" class="form-control  text-white" id="">
-                                        <option class="form-control bg-dark text-white" value="cash">CASH</option>
-                                        {% for i in bank %}
-                                        <option class="form-control bg-dark text-white" value="{{i.id}}">{{i.bankname}}</option>
-                                        {% endfor %}
-                                    </select> 
-                                                            
-                                </div>
-                            </div>
-                            <div class="row form-inline m-1">
-                                <div class="col-md-6">
-                                    <label for="">ACCOUNT NUMBER</label>
-                                    <input class="form-control" type="text" name="acc_number" value="">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="">DESCRIPTION</label>
-                                    <input class="form-control" type="text" name="desc" value="">
-                                </div>
-                            </div>
-                            <div class="row form-inline m-1">
-                                <div class="col-md-6">
-                                    <label for="">CURRENT BALANCE</label>
-                                    <input class="form-control" type="text" name="balance" value="">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="">BALANCE AS OF</label>
-                                    <input class="form-control" type="date" name="date" value="">
-                                </div>
-                            </div>
-                            <div class="row form-inline m-1">
-                                <div class="col-md-6">
-                                    <label for="">LOAN RECIEVED in</label>
-                                    <select  name="recieved" class="form-control  text-white" id="">
-                                        <option class="form-control bg-dark text-white" value="cash">CASH</option>
-                                        {% for i in bank %}
-                                        <option class="form-control bg-dark text-white" value="{{i.id}}">{{i.bankname}}</option>
-                                        {% endfor %}
-                                    </select>                                  
-                                </div>
-                                
-                            </div>
-                            <div class="row form-inline m-1">
-                                <div class="col-md-6">
-                                    <label for="">INTREST RATE %</label>
-                                    <input class="form-control" type="text" placeholder="%" name="intrest" value="%">
-                                </div>
-                                <div class="col-md-6">
-                                    <center><label for="">TERM</label></center>
-                                   <center>
-                                    <select  name="term" class="form-control  text-white" id="">
-                                        <option class="form-control bg-dark text-white" value="MONTH">MONTH</option>
-                                        <option class="form-control bg-dark text-white" value="YEAR">YEAR</option>
-
-                                    </select>
-                                   </center>
-                                </div>
-                            </div>
-                            <div class="row form-inline m-1">
-                                <div class="col-md-6">
-                                    <label for="">PROCESSING FEE</label>
-                                    <input class="form-control" type="text" name="processing" value="">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="">PROCESSING PAID FROM</label>
-                                    <select  name="paid" class="form-control  text-white" id="">
-                                        <option class="form-control bg-dark text-white" value="cash">CASH</option>
-                                        {% for i in bank %}
-                                        <option class="form-control bg-dark text-white" value="{{i.id}}">{{i.bankname}}</option>
-                                        {% endfor %}
-                                    </select>                                 
-                                 </div>
-                            </div>
-                            <!-- Other fields... -->
-                        </div>
-                        <div class="modal-footer">
-                            <button type="reset" class="btn btn-secondary">Reset</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <input type="submit" class="btn btn-primary" value="Save">
-                        </div>
-                    </form>
+                   
                 </div>
             </div>
         </div>

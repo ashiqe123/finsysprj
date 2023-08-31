@@ -892,10 +892,11 @@ urlpatterns = [
     path('cash_statement',views.cash_statement,name='cash_statement'),
     path('edit_add_cash/<int:id>',views.edit_add_cash,name='edit_add_cash'),
     path('loan',views.loan,name='loan'),
-    path('loan_list',views.loan_list,name='loan_list'),
+    path('loan_list/<int:id>',views.loan_list,name='loan_list'),
     path('loan_statement',views.loan_statement,name='loan_statement'),
     path('create_loan_account',views.create_loan_account,name='create_loan_account'),
-    path('delet_loan/<int:id>',views.delet_loan,name='delet_loan')
+    path('delet_loan/<int:id>',views.delet_loan,name='delet_loan'),
+    path('create_loan',views.create_loan,name='create_loan')
 
 
 
