@@ -7,7 +7,7 @@
        
             <div class="col-md-12">
                <center>
-               <h2> New loan Acoount</h2>
+               <h2> Edit loan Acoount</h2>
             </center>
             </div>
             
@@ -18,7 +18,7 @@
 </div>
 
 
-<form id="bankForm" method="post" action="{% url 'create_loan_account' %}">
+<form id="bankForm" method="post" action="{% url 'edit_loan_account' loan.id %}">
     {% csrf_token %}
     <div class="form-group col-md-12">
         <div class="row form-inline mt-2">
@@ -27,7 +27,7 @@
                     <div class="row">
                         <div class="col-md-3"><label for="">ACCOUNT NAME</label>
                         </div>
-                        <div class="col-md-3"><input class="form-control bg-grey" type="text" name="acc_name" value="">
+                        <div class="col-md-3"><input class="form-control bg-grey" type="text" name="acc_name" value="{{loan.account_name}}">
                         </div>
                     </div>
                 </div>
@@ -39,6 +39,7 @@
                         </div>
                         <div class="col-md-3">
                             <select  style="width: 160%;"   name="lender" class="form-control  text-white" id="">
+                                <option class="form-control bg-dark text-white" value="{{loan.lenderbank}}" selected>{{loan.lenderbank}}</option>
                                 <option class="form-control bg-dark text-white" value="cash">CASH</option>
                                 {% for i in bank %}
                                 <option class="form-control bg-dark text-white" value="{{i.id}}">{{i.bankname}}</option>
@@ -59,7 +60,7 @@
 
                     </div>
                     <div class="col-md-3">
-                        <input class="form-control" type="text" name="acc_number" value="">
+                        <input class="form-control" type="text" name="acc_number" value="{{loan.account_number}}">
 
                     </div>
                 </div>
@@ -72,7 +73,7 @@
                     </div>
                     <div class="col-md-3">
                        
-                        <input class="form-control" type="text" name="desc" value="">
+                        <input class="form-control" type="text" name="desc" value="{{loan.desc}}">
                     </div>
                 </div>
             </div>
@@ -86,7 +87,7 @@
 
                     </div>
                     <div class="col-md-3">
-                                        <input class="form-control" type="text" name="balance" value="">
+                                        <input class="form-control" type="text" name="balance" value="{{loan.loan_amount}}">
 
                     </div>
                 </div>
@@ -98,7 +99,7 @@
 
                     </div>
                     <div class="col-md-3">
-                                        <input class="form-control" type="date" name="date" value="">
+                                        <input class="form-control" type="date" name="date" value="{{loan.date |date:'Y-m-d'}}">
 
                     </div>
                 </div>
@@ -113,6 +114,7 @@
                     </div>
                     <div class="col-md-3">
                          <select style="width: 160%;"  name="recieved" class="form-control  text-white" id="">
+                            <option class="form-control bg-dark text-white" value="{{loan.recieced_bank}}" selected>{{loan.recieced_bank}}</option>
                     <option class="form-control bg-dark text-white" value="cash">CASH</option>
                     {% for i in bank %}
                     <option class="form-control bg-dark text-white" value="{{i.id}}">{{i.bankname}}</option>
@@ -132,7 +134,7 @@
 
                     </div>
                     <div class="col-md-3">
-                        <input class="form-control" type="text" placeholder="%" name="intrest" value="%">
+                        <input class="form-control" type="text" placeholder="%" name="intrest" value="{{loan.intrest}}">
 
                     </div>
                 </div>
@@ -146,6 +148,7 @@
                     <div class="col-md-3">
                         
                 <select  style="width: 160%;"   name="term" class="form-control  text-white" id="">
+                    <option value="{{loan.term}}" selected>{{loan.term}}</option>
                     <option class="form-control bg-dark text-white" value="MONTH">MONTH</option>
                     <option class="form-control bg-dark text-white" value="YEAR">YEAR</option>
 
@@ -164,7 +167,7 @@
 
                     </div>
                     <div class="col-md-3">
-                        <input class="form-control" type="text" name="processing" value="">
+                        <input class="form-control" type="text" name="processing" value="{{loan.processing}}">
 
                     </div>
                 </div>
@@ -177,6 +180,7 @@
                     </div>
                     <div class="col-md-3">
                          <select   style="width: 160%;"  name="paid" class="form-control  text-white" id="">
+                            <option value="{{loan.paid}}" selected>{{loan.paid}}</option>
                     <option class="form-control bg-dark text-white" value="cash">CASH</option>
                     {% for i in bank %}
                     <option class="form-control bg-dark text-white" value="{{i.id}}">{{i.bankname}}</option>

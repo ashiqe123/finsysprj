@@ -323,15 +323,32 @@
                                                 <td>  {{a.cash_adjust }}</td>
                                                 {% elif a.cash_adjust == 'REDUCE CASH' %}
                                                 <td> {{a.cash_adjust }}</td>
+                                                {% else %}
+                                                <td>{{a.bank_type}}</td>
                                             {% endif %}
-                                            <td>{{a.bank_type}}</td>
+                                           
+                                            <td>{{a.type}}</td>
+                                            {% if a.type == 'LOAN ADJ' %}
+                                            <td>{{a.loan_date}}</td>
+
+                                            {% else %}
                                             <td>{{a.cash_date}}</td>
-                                            <td>{{a.cash_description}}</td>
-                                            {% if a.cash_adjust == 'ADD CASH' %}
-                                            <td>+ {{a.cash_cash}}</td>
-                                            {% elif a.cash_adjust == 'REDUCE CASH' %}
-                                            <td>- {{a.cash_cash}}</td>
+
                                             {% endif %}
+                                            {% if a.type == 'LOAN ADJ' %}
+                                            <td>{{a.loan_desc}}</td>
+                                            {% else %}
+                                            <td>{{a.cash_description}}</td>
+                                            {% endif %}
+                                            {% if a.type == 'LOAN ADJ' %}
+                                                <td>{{a.loan_amount }}</td>
+                                                {% else %}
+                                                {% if a.cash_adjust == 'ADD CASH' %}
+                                                <td>+ {{a.cash_cash}}</td>
+                                                {% elif a.cash_adjust == 'REDUCE CASH' %}
+                                                <td>- {{a.cash_cash}}</td>
+                                                {% endif %}
+                                                {% endif %}
 
                                 {% endif %}
                                         </tr>

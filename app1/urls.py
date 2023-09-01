@@ -896,7 +896,9 @@ urlpatterns = [
     path('loan_statement',views.loan_statement,name='loan_statement'),
     path('create_loan_account',views.create_loan_account,name='create_loan_account'),
     path('delet_loan/<int:id>',views.delet_loan,name='delet_loan'),
-    path('create_loan',views.create_loan,name='create_loan')
+    path('create_loan',views.create_loan,name='create_loan'),
+    path('edit_loan_account/<int:id>',views.edit_loan_account,name='edit_loan_account'),
+    path('edit_loan/<int:id>',views.edit_loan,name='edit_loan')
 
 
 
