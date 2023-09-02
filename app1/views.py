@@ -38451,8 +38451,12 @@ def create_loan(request):
     }
     return render(request,'app1/loan_creat.html',context)
     
+from django.shortcuts import render, redirect
+from .models import company, bankings_G, loan_account, bank_transactions
+
 def create_loan_account(request):
     cid = company.objects.get(id=request.session["uid"])
+    
     if request.method == 'POST':
         account_name = request.POST.get('acc_name')
         account_number = request.POST.get('acc_number')
@@ -38467,8 +38471,6 @@ def create_loan_account(request):
         desc = request.POST.get('desc')
         date = request.POST.get('date')
         balance = loan_amount - processing
-        
-        cid = company.objects.get(id=request.session["uid"])
         
         # Handle lender, received bank, and processing bank options
         if lenderbank == 'cash':
@@ -38493,17 +38495,15 @@ def create_loan_account(request):
         
         if paid == 'cash':
             processing_bankname = 'cash'
-            bal=cid.cash-int(processing)
-            cid.cash = bal
+            cid.cash -= processing
             cid.save()
         else:
             processing_bank = bankings_G.objects.get(id=paid)
             processing_bankname = processing_bank.bankname
-            bal=processing_bank.balance-int(processing)
-            processing_bank.balance=bal
-            processing_bank.save()    
+            processing_bank.balance -= processing
+            processing_bank.save()
         
-        
+        # Create the loan account entry
         loan = loan_account(
             account_name=account_name,
             account_number=account_number,
@@ -38522,8 +38522,9 @@ def create_loan_account(request):
         )
         loan.save()
 
-        l_id=loan_account.objects.get(id=loan.id)
+        l_id = loan_account.objects.get(id=loan.id)
         
+        # Create transaction records
         trans = bank_transactions(
             bank_type='OPENING BAL',
             from_trans=lenderbank,
@@ -38532,34 +38533,31 @@ def create_loan_account(request):
             type='LOAN ADJ',
             cid=cid,
             loan_amount=loan_amount,
-            loan_date=date ,
+            loan_date=date,
             loan=l_id
         )
         trans.save()
-        bal=abs(cid.cash)-int(loan_amount)
-        if trans.from_trans == 'cash':
-            cid.cash = bal
-            cid.save()
         
-        else:
-            lender.balance = bal
-            lender.save()
+        
         
         transaction = bank_transactions(
-            bank_type='PROCESING FEE',
+            bank_type='PROCESSING FEE',
             from_trans=lenderbank,
             to_trans=received_bankname,
             cid=cid,
             loan_desc=desc,
             type='LOAN ADJ',
-            loan_amount=loan_amount,
-            loan_date=date ,
+            loan_amount=processing,
+            loan_date=date,
             loan=l_id, 
         )
         transaction.save()
+        
         loan.balance -= processing
         loan.save()
+        
         print('DONE')
+    
     return redirect('loan')
 
 
@@ -38633,14 +38631,7 @@ def edit_loan_account(request,id):
             loan=l_id
         )
         trans.save()
-        bal=abs(cid.cash)-int(loan_amount)
-        if trans.from_trans == 'cash':
-            cid.cash = bal
-            cid.save()
         
-        else:
-            lender.balance = bal
-            lender.save()
         
         transaction = bank_transactions(
             bank_type='PROCESING FEE',
@@ -38683,6 +38674,14 @@ def loan_list(request,id):
         }
     return render(request,'app1/loan_list.html',context)
 
+def loan_trans(request):
+    cid = company.objects.get(id=request.session["uid"])
+    bank=bankings_G.objects.filter(cid=cid)
+    context={
+        'cid':cid,
+        'bank':bank,
+    }
+    return render(request,'app1/loan_payment.html',context)
 
 def loan_edit(request,id):
     return

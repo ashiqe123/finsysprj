@@ -1769,3 +1769,4 @@ class bank_transactions(models.Model):
     loan_amount=models.IntegerField(default=0,blank=True,null=True)
     loan_desc=models.TextField(blank=True,null=True)
     loan_date=models.DateField(blank=True,null=True)
+    loan_intrest=models.TextField(max_length=100,default=0)

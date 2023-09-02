@@ -20,7 +20,7 @@
         </div>
     </div>
    
-   
+    
 <div class="card radius-15">
     <div class="card-body">
         <div class="container">
@@ -35,21 +35,11 @@
                   <div class="col">
                     
                     <div class="dropdown">
-                        <button type="button" class="btn btn-outline-info dropdown-toggle text-grey"
-                                data-toggle="dropdown">make payment
+                        <button type="button" class="btn btn-outline-info dropdown-toggle text-grey" data-toggle="dropdown">
+                            <a href="{% url 'loan_trans'  %}">Make Payment</a>
                         </button>
-                        <div class="dropdown-menu" style="background-color: black;">
-                            <a class="dropdown-item" id="b2c" href="#" data-toggle="modal" data-target="#bankToCashTransferModal"
-                               style="height: 40px; font-size: 15px; color: white;">Bank To Cash Transfer</a>
-                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#cashToBankTransferModal"
-                               style="height: 40px; font-size: 15px; color: white;">Cash To Bank Transfer</a>
-                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#bankToBankTransferModal"
-                               style="height: 40px; font-size: 15px; color: white;">Bank To Bank Transfer</a>
-                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#adjustBankBalanceModal"
-                               style="height: 40px; font-size: 15px; color: white;">Adjust Bank Balance</a>
-                        </div>
-                        
-                    </div> 
+                    </div>
+                    
                   </div>
                   <div class="col">
                     <button type="button" class="btn btn-outline-info text-grey" ><a href="">STATEMENT</a>
@@ -103,17 +93,16 @@
                 </div>
             </th>                     
             <th><h6><b>AMOUNT</b></h6></th>
-            <th><h6><b>Processing</b></h6></th>
 
             <th><h6><b>ACTION</b></h6></th>
                         
                     </tr>
                     </thead>
                     <tbody>
-                  {% for a in loan_tr %}
-                <tr >              {% if a.bank_type == 'OPENING BAL' %}
+                        {% for a in loan_tr %}
+                <tr >              {% if a.bank_type == 'PROCESSING FEE' %}
                                 <td >{{ a.bank_type }}</td>
-                                {% elif a.bank_type == 'PROCESING FEE' %}
+                                {% elif a.bank_type == 'OPENING BAL' %}
                                 <td >{{ a.bank_type }}</td>
                                 {% endif %}
                                 <td >{{ a.loan_desc }}</td>
@@ -121,7 +110,6 @@
                                 
                                 
                                 <td>{{a.loan_amount}}</td>
-                                <td>{{a.loan.processing}}</td>
                                 <td>
                                     <div class="dropdown">
                                         <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
@@ -132,6 +120,7 @@
                                     </div>
                                 </td>
                             </tr>
+                            
 {% endfor %}
 
                             

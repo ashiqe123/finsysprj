@@ -85,42 +85,60 @@
                {% for a in bnk %}
                         <tr>
                             {% if a.type != 'OPENING BAL' %}
-                            {% if a.cash_adjust == 'ADD CASH' %}
-                                <td>  {{a.cash_adjust }}</td>
-                                {% elif a.cash_adjust == 'REDUCE CASH' %}
-                                <td> {{a.cash_adjust }}</td>
-                            {% endif %}
-                            <td>{{a.bank_type}}</td>
-                            <td>{{a.cash_date}}</td>
-                            <td>{{a.cash_description}}</td>
-                            {% if a.cash_adjust == 'ADD CASH' %}
-                            <td>+ {{a.cash_cash}}</td>
-                            {% elif a.cash_adjust == 'REDUCE CASH' %}
-                            <td>-{{a.cash_cash}}</td>
-                            {% endif %}
-                            {% if a.bank_type == '' %}
-                            <td>
-                                <div class="dropdown">
-                                    <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item edit-item" href="#" data-toggle="modal" data-target="#editModal{{ a.id }}">Edit</a>
+                                            {% if a.cash_adjust == 'ADD CASH' %}
+                                                <td>  {{a.cash_adjust }}</td>
+                                                {% elif a.cash_adjust == 'REDUCE CASH' %}
+                                                <td> {{a.cash_adjust }}</td>
+                                                {% else %}
+                                                <td>{{a.bank_type}}</td>
+                                            {% endif %}
+                                           
+                                            <td>{{a.type}}</td>
+                                            {% if a.type == 'LOAN ADJ' %}
+                                            <td>{{a.loan_date}}</td>
 
-                                        <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
-                                    </div>
-                                </div>
-                            </td>
-                            {% else %}
-                            <td>
-                                <div class="dropdown">
-                                    <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
-                                    <div class="dropdown-menu">
+                                            {% else %}
+                                            <td>{{a.cash_date}}</td>
 
-                                        <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
-                                    </div>
-                                </div>
-                            </td>
-                            {% endif %}
-                {% endif %}
+                                            {% endif %}
+                                            {% if a.type == 'LOAN ADJ' %}
+                                            <td>{{a.loan_desc}}</td>
+                                            {% else %}
+                                            <td>{{a.cash_description}}</td>
+                                            {% endif %}
+                                            {% if a.type == 'LOAN ADJ' %}
+                                                <td>{{a.loan_amount }}</td>
+                                                {% else %}
+                                                {% if a.cash_adjust == 'ADD CASH' %}
+                                                <td>+ {{a.cash_cash}}</td>
+                                                {% elif a.cash_adjust == 'REDUCE CASH' %}
+                                                <td>- {{a.cash_cash}}</td>
+                                                {% endif %}
+                                                {% endif %}
+                                                {% if a.bank_type == '' %}
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item edit-item" href="#" data-toggle="modal" data-target="#editModal{{ a.id }}">Edit</a>
+                    
+                                                            <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                {% else %}
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                                        <div class="dropdown-menu">
+                    
+                                                            <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                {% endif %}
+
+                                {% endif %}
                         </tr>
     
    

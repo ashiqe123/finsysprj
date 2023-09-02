@@ -1,0 +1,142 @@
+{% extends 'app1/base.html' %}
+{% load static %}
+{% block body %}
+
+<div class="card radius-15 h-20 p-3">
+    <div class="row">
+       
+            <div class="col-md-12">
+               <center>
+               <h2>  loan Payment</h2>
+            </center>
+            </div>
+            
+            
+            <hr style="width:95%">
+        
+    </div>
+</div>
+
+
+<form id="bankForm" method="post" action="">
+    {% csrf_token %}
+    <div class="form-group col-md-12">
+        <div class="row form-inline mt-2">
+           
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-3"><label for="">PRINCIPAL AMOUNT</label>
+                        </div>
+                        <div class="col-md-3"><input class="form-control bg-grey" type="text" name="principal" value="">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="">DATE</label>
+
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" name="date" class="form-control">
+                        </div>
+                    </div>
+                   
+                                            
+                </div>
+           
+        </div>
+        <div class="row form-inline mt-2">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="">INTREST AMOUNT</label>
+
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" type="text" name="intrest" value="">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    
+                </div>
+            </div>
+           
+    </div>
+        <div class="row form-inline mt-2">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-3">
+                <label for="">TOTAL AMOUNT</label>
+
+                    </div>
+                    <div class="col-md-3">
+                                        <input class="form-control" type="text" name="total" value="">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    
+                </div>
+            </div>
+        </div>
+        <div class="row form-inline mt-2">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="">PAID FROM</label>
+
+                    </div>
+                    <div class="col-md-3">
+                         <select style="width: 160%;"  name="recieved" class="form-control  text-white" id="">
+                    <option class="form-control bg-dark text-white" value="cash">CASH</option>
+                    {% for i in bank %}
+                    <option class="form-control bg-dark text-white" value="{{i.id}}">{{i.bankname}}</option>
+                    {% endfor %}
+                </select>  
+                    </div>
+                </div>
+                                               
+            </div>
+            
+        </div>
+        <div class="row form-inline mt-2">
+            <div class="col-md-6">
+                <div class="row">
+                    
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                   
+                </div>
+              
+            </div>
+        </div>
+        <div class="row form-inline mt-2">
+            <div class="col-md-6">
+                <div class="row">
+                    
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                   
+                </div>
+                                          
+             </div>
+        </div>
+        <!-- Other fields... -->
+    </div>
+    <div class="modal-footer">
+        <button type="reset" class="btn btn-secondary">Reset</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" value="Save">
+    </div>
+</form>
+{% endblock %}
