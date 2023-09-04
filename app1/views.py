@@ -38563,6 +38563,7 @@ def create_loan_account(request):
 
 
 def edit_loan(request,id):
+    print(loan_id_global)
     cid = company.objects.get(id=request.session["uid"])
     loan=loan_account.objects.get(id=id)
     bank=bankings_G.objects.filter(cid=cid)
@@ -38657,31 +38658,90 @@ def delet_loan(request,id):
     return redirect('loan')
 
 
-
 def loan_list(request,id):
+    global loan_id_global
+    loan_id_global = id
     cid = company.objects.get(id=request.session["uid"])
     loan=loan_account.objects.filter(cid=cid)
     cmp1 = company.objects.get(id=request.session["uid"])
     loan_tr=bank_transactions.objects.filter(loan_id=id)
+    
     context={
         'cmp1':cmp1,
         'loan':loan,
         
         'cid':cid,
         'loan_tr':loan_tr,
+        'loan_id_global':loan_id_global,
 
         
         }
     return render(request,'app1/loan_list.html',context)
 
-def loan_trans(request):
+def loan_trans(request,id):
+    global loan_id_global
+    loan_id_global = id
     cid = company.objects.get(id=request.session["uid"])
     bank=bankings_G.objects.filter(cid=cid)
     context={
         'cid':cid,
-        'bank':bank,
+        'bank':bank, 
+        'loan_id_global':loan_id_global, 
     }
     return render(request,'app1/loan_payment.html',context)
+
+def crt_loan_trans(request,id):
+    
+
+    cid = company.objects.get(id=request.session["uid"])
+    if request.method == 'POST':
+        principal=int(request.POST.get('principal'))
+        date=request.POST.get('date')
+        intrest=request.POST.get('interest')
+        total=int(request.POST.get('total'))
+        recieved_from=request.POST.get('recieved')
+        principal=request.POST.get('principal')
+        bank=bankings_G.objects.filter(cid=cid)
+        loan=loan_account.objects.get(id=id)
+        print(loan.id)
+        lender_bank = bankings_G.objects.get(bankname=loan.lenderbank)
+        if recieved_from == 'cash':
+            recieved_from = 'cash'
+            cid.cash - int(total)
+            cid.save()
+        else:
+            recieved_from = bankings_G.objects.get(id=recieved_from)
+            recieved_from = recieved_from.bankname            # Deduct payment from lender bank
+            recieved_from.balance -= total
+            recieved_from.save()
+            print(loan.balance)
+            print(principal)
+        bal=int(loan.balance) - int(principal)
+        loan.balance = bal
+        loan.save()
+            
+            # Add payment to received bank
+        
+        
+
+            # Create a transaction record
+        transaction = bank_transactions(
+                bank_type='EMI PAID',
+                from_trans=recieved_from,
+                to_trans=lender_bank.bankname,
+                cid=cid,
+                loan_desc='EMI ',  # Replace with the appropriate field from loan_account
+                type='LOAN ADJ',
+                loan_amount=total,
+                loan_intrest=intrest,
+                loan_date=date,
+                loan_id=loan.id,
+                balance = loan.balance
+                
+            )
+        transaction.save()
+            
+    return redirect('loan')
 
 def loan_edit(request,id):
     return

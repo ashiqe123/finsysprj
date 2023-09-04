@@ -35,8 +35,8 @@
                   <div class="col">
                     
                     <div class="dropdown">
-                        <button type="button" class="btn btn-outline-info dropdown-toggle text-grey" data-toggle="dropdown">
-                            <a href="{% url 'loan_trans'  %}">Make Payment</a>
+                        <button type="button" class="btn btn-outline-info dropdown-toggle text-grey" >
+                            <a href="{% url 'loan_trans' loan_id_global  %}">Make Payment</a>
                         </button>
                     </div>
                     
@@ -93,8 +93,10 @@
                 </div>
             </th>                     
             <th><h6><b>AMOUNT</b></h6></th>
+            <th><h6><b>INTEREST</b></h6></th>
 
             <th><h6><b>ACTION</b></h6></th>
+            <th style="display: none;"><h6><b><td>{{loan_id_global}}</td></b></h6></th>
                         
                     </tr>
                     </thead>
@@ -104,12 +106,15 @@
                                 <td >{{ a.bank_type }}</td>
                                 {% elif a.bank_type == 'OPENING BAL' %}
                                 <td >{{ a.bank_type }}</td>
+                                {% elif a.bank_type == 'EMI PAID' %}
+                                <td >{{ a.bank_type }}</td>
                                 {% endif %}
                                 <td >{{ a.loan_desc }}</td>
                                 <td >{{ a.loan_date }}</td>
                                 
                                 
                                 <td>{{a.loan_amount}}</td>
+                                <td>{{a.loan_intrest}}</td>
                                 <td>
                                     <div class="dropdown">
                                         <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
@@ -119,6 +124,7 @@
                                         </div>
                                     </div>
                                 </td>
+                                
                             </tr>
                             
 {% endfor %}
