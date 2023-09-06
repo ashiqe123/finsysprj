@@ -318,6 +318,7 @@
                                 </thead>
                                 <tbody>
                                     {% for a in bnk %}
+                                    {% if a.bank_type != 'PROCESSING FEE'%}
                                     <tr >
                                         <td>{{a.bank_type}}</td>
                                         <td >{{ a.type }}</td>
@@ -333,13 +334,15 @@
                                         <td  style="font-size: medium;">{{ a.amount }}</td>
                                         {% elif a.type ==  'FROM BANK TRANSFER' %}
                                         <td style="font-size: medium;">-{{ a.amount }}</td>
-        
+                                        {% elif a.type ==  'LOAN APPROVED' %}
+                                        <td style="font-size: medium;">-{{ a.amount }}</td>
                                         {% else %}
                                         <td  style="font-size: medium;">{{ a.amount }}</td>
                                         {% endif %}
                                         </td></a>
                                         
                                     </tr>
+                                    {% endif %}
                                     {% endfor %}
                                        
                                    

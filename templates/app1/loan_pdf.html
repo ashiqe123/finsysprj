@@ -1,12 +1,13 @@
-{% extends 'app1/base.html' %}
-{% block body %}
-{% load social_share %}
-    {% load static %}
-    {% if user.is_authenticated %}
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js" ></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js" ></script>
-   
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
     <style>
         #div1{
             width: 33.33%;
@@ -212,41 +213,16 @@
             border: none;
             border-bottom: 2px solid #000;
         }
-        hr {
-            border: 0;
-            clear:both;
-            display:block;
-            width: 96%;               
-            background-color:#000000;
-            height: 1px;
-        }
+        
     </style>
 
-    <script>
-        async function generatePDF() {
-            var downloading = document.getElementById("whatToPrint");
-            var doc = new jsPDF('l', 'pt');
 
-            await html2canvas(downloading, {  
-            }).then((canvas) => {
-                doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 10, 700, 850);
-            })
-            doc.save("Document.pdf");
-        } 
-    </script>
-
-    <div class="page-content" >
-        <div class="card radius-15">
-            <div class="card-body">
-                <div class="card-title">
-                    <center><h2 class="mb-0">CASH STATEMENT</h2></center>
-                    <hr>
-                    
-                </div>
-            </div>
-        </div>
+</head>
+<body>
     
-        <div id="whatToPrint">
+
+  
+       
                 <div class="my-5 page" size="A4" >
                     <div class="p-5">
                         <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
@@ -312,28 +288,30 @@
                                         <th>DATE</th>
                                         <th>DESCRIPTION</th>
                                         <th>BALANCE</th>
+                                        <th>CLOSING BAL</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                    
                                {% for a in bnk %}
                                         <tr>
-                                            {% if a.type != 'OPENING BAL' %}
-                                            {% if a.cash_adjust == 'ADD CASH' %}
-                                                <td>  {{a.cash_adjust }}</td>
-                                                {% elif a.cash_adjust == 'REDUCE CASH' %}
-                                                <td> {{a.cash_adjust }}</td>
-                                                {% else %}
-                                                <td>{{a.bank_type}}</td>
-                                            {% endif %}
+                                            {% if a.bank_type == 'OPENING BAL' %}
                                            
+                                                <td>{{a.bank_type}}</td>
+                                            {% elif a.bank_type == 'PROCESSING FEE' %}
+                                            <td>{{a.bank_type}}</td>
+                                            {% elif a.bank_type == 'EMI PAID' %}
+                                            <td>{{a.bank_type}}</td>
+                                            {% endif %}
+                                            {% if a.type == 'LOAN APPROVED' %}
                                             <td>{{a.type}}</td>
+                                            {% elif a.type == 'LOAN ADJ' %}
+                                            <td>{{a.type}}</td>
+                                            {% endif %}
                                             {% if a.type == 'LOAN ADJ'   %}
                                             <td>{{a.loan_date}}</td>
                                             {% elif a.type == 'LOAN APPROVED' %}
                                             <td>{{a.loan_date}}</td>
-                                            {% else %}
-                                            <td>{{a.cash_date}}</td>
 
                                             {% endif %}
                                             {% if a.type == 'LOAN ADJ' %}
@@ -354,8 +332,8 @@
                                                 <td>- {{a.cash_cash}}</td>
                                                 {% endif %}
                                                 {% endif %}
+                                                <td>{{a.balance}}</td>
 
-                                {% endif %}
                                         </tr>
                                        
                                         <div class="modal fade" id="deleteModal{{ a.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -376,66 +354,6 @@
                         <img src="cart.jpg" class="img-fluid cart-bg" alt="">   
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="modal fade" id="file" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content" style="background-color: #213b52;">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Add File</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
-                        <div class="modal-body">
-                            <input type="file" class="form-control" name="file">
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-info" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-outline-info">Save</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <script>
-            $(function () {
-                $('#cmd').click(function () {
-                    var doc = new jsPDF();
-                    doc.addHTML($('#content')[0], 15, 15, {
-                        'background': '#fff',
-                    }, function() {
-                        doc.save('sample-file.pdf');
-                    });
-                });
-            });
-        </script>
-
-        <script> 
-            function printDiv() { 
-                var divContents = document.getElementById("panel").innerHTML; 
-                var a = window.open('', '', 'height=800, width=800'); 
-                a.document.write('<html>'); 
-                a.document.write('<body > <h1> <br>'); 
-                a.document.write(divContents); 
-                a.document.write('</body></html>'); 
-                a.document.close(); 
-                a.print(); 
-            } 
-        </script>
-
-        <script type="text/javascript">
-            $('.delete').click(function(e){
-                var result = confirm("Are you sure you want to delete this record? If you delete this, not retrive");
-
-                if(!result) {
-                    e.preventDefault();
-                }
-            });
-        </script>
-
-    {% endif %}
-    {% endblock %}
+            
+</body>
+</html>

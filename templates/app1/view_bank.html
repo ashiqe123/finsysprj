@@ -152,7 +152,9 @@
                     </thead>
                     <tbody>
                   {% for a in trans %}
+                  {% if a.bank_type != 'PROCESSING FEE' %}
                 <tr >
+                    
                                 <td >{{ a.type }}</td>
                                 <td >{{ a.desc }}</td>
                                 <td >{{ a.adj_date }}</td>
@@ -180,8 +182,9 @@
                                         </div>
                                     </div>
                                 </td>
+                               
                             </tr>
-
+                            {% endif %}
 
                             {% if a.type == 'CASH WITHDRAW' %}
 

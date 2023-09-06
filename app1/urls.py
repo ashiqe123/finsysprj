@@ -893,14 +893,15 @@ urlpatterns = [
     path('edit_add_cash/<int:id>',views.edit_add_cash,name='edit_add_cash'),
     path('loan',views.loan,name='loan'),
     path('loan_list/<int:id>',views.loan_list,name='loan_list'),
-    path('loan_statement',views.loan_statement,name='loan_statement'),
+    path('loan_statement/<int:id>',views.loan_statement,name='loan_statement'),
     path('create_loan_account',views.create_loan_account,name='create_loan_account'),
     path('delet_loan/<int:id>',views.delet_loan,name='delet_loan'),
     path('create_loan',views.create_loan,name='create_loan'),
     path('edit_loan_account/<int:id>',views.edit_loan_account,name='edit_loan_account'),
     path('edit_loan/<int:id>',views.edit_loan,name='edit_loan'),
     path('loan_trans/<int:id>',views.loan_trans,name='loan_trans'),
-    path('crt_loan_trans/<int:id>',views.crt_loan_trans,name='crt_loan_trans')
+    path('crt_loan_trans/<int:id>',views.crt_loan_trans,name='crt_loan_trans'),
+    path('loan_pdf/<int:id>',views.loan_pdf,name='loan_pdf')
 
 
 

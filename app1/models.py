@@ -1750,7 +1750,8 @@ class loan_account(models.Model):
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
     balance=models.IntegerField(default=0)    
     date=models.DateField(blank=True,null=True)
-
+    recieved_amount=models.IntegerField(default=0)   
+     
 class bank_transactions(models.Model):
     bank_type=models.TextField(max_length=100)
     from_trans=models.TextField(max_length=100)
