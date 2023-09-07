@@ -38615,37 +38615,103 @@ def edit_loan(request,id):
 
 
 
-def edit_loan_account(request,id):
+def edit_loan_account(request, id):
+    # Retrieve the company and loan account objects
     cid = company.objects.get(id=request.session["uid"])
+    loan = loan_account.objects.get(id=id)
+    cash=cid.cash
     if request.method == 'POST':
         # Retrieve and update the loan account fields here
         loan.account_name = request.POST.get('acc_name')
         loan.account_number = request.POST.get('acc_number')
         loan.lenderbank = request.POST.get('lender')
-        loan.recieced_bank = request.POST.get('recieved')
-        loan.intrest = request.POST.get('intrest')
+        loan.received_bank = request.POST.get('received')
+        loan.interest = request.POST.get('interest')
         loan.term = request.POST.get('term')
         loan.loan_amount = int(request.POST.get('balance'))
         loan.processing = int(request.POST.get('processing'))
         loan.paid = request.POST.get('paid')
+        loan.status = "Active"
         loan.desc = request.POST.get('desc')
         loan.date = request.POST.get('date')
-
+        loan.balance = loan.loan_amount
+        loan.received_amount = loan.loan_amount - loan.processing
+        print(loan.recieced_bank)
         # Handle lender, received bank, and processing bank options (similar to your create_loan_account code)
+        if loan.lenderbank == 'cash':
+            lender_bankname = 'cash'
+            
+            cid.cash -= loan.loan_amount
+            cid.save()
+        else:
+            lender = bankings_G.objects.get(id=loan.lenderbank)
+            lender_bankname = lender.bankname
+            lender.balance -= loan.loan_amount
+            lender.save()
+
+        if loan.received_bank == 'cash':
+            received_bankname = 'cash'
+            cid.cash += loan.balance
+            cid.save()
+        else:
+            received = bankings_G.objects.get(bankname=loan.recieced_bank)
+            received_bankname = received.bankname
+            received.balance += loan.balance
+            received.save()
+
+        if loan.paid == 'cash':
+            processing_bankname = 'cash'
+            cid.cash -= loan.processing
+            cid.save()
+        else:
+            processing_bank = bankings_G.objects.get(bankname=loan.paid)
+            processing_bankname = processing_bank.bankname
+            processing_bank.balance -= loan.processing
+            processing_bank.save()
 
         # Save the updated loan account
         loan.save()
 
+        # Update related bank transactions
+        bnk = bank_transactions.objects.filter(loan_id=loan)
+        for transaction in bnk:
+            if loan.lenderbank == 'cash':
+                if transaction.bank_type == 'OPENING BAL':
+                    transaction.loan_amount = loan.loan_amount
+                    transaction.loan_date = loan.date
+                    transaction.balance = loan.loan_amount
+                    transaction.cash_cash = loan.loan_amount
+                    transaction.cash_date = loan.date
+                    transaction.cash_discription = loan.desc
+                elif transaction.bank_type == 'PROCESSING FEE':
+                    transaction.loan_amount = loan.processing
+                    transaction.loan_date = loan.date
+                    transaction.balance = loan.loan_amount
+                    transaction.cash_cash = loan.processing
+                    transaction.cash_date = loan.date
+                    transaction.cash_discription = loan.desc
+            else:
+                if transaction.bank_type == 'OPENING BAL':
+                    transaction.loan_amount = loan.loan_amount
+                    transaction.loan_date = loan.date
+                    transaction.balance = loan.loan_amount
+                    transaction.amount = loan.loan_amount
+                    transaction.adj_date = loan.date
+                    transaction.desc = loan.desc
+                if transaction.bank_type == 'PROCESSING FEE':
+                    transaction.loan_amount = loan.processing
+                    transaction.loan_date = loan.date
+                    transaction.balance = loan.processing
+                    transaction.amount = loan.processing
+                    transaction.adj_date = loan.date
+                    transaction.desc = loan.desc
+            transaction.save()
+
         # Redirect to the loan list page or show a success message
         return redirect('loan')
-       
-        
-        cid = company.objects.get(id=request.session["uid"])
-        
-        # Handle lender, received bank, and processing bank options
-        
-        
-    return render(request,'app1/loan_edit.html')
+
+    return render(request, 'app1/loan_edit.html')
+
 
 def delet_loan(request,id):
     loan=loan_account.objects.get(id=id)
@@ -38774,11 +38840,15 @@ def loan_statement(request,id):
     cmp1 = company.objects.get(id=request.session["uid"])
     
     bnk=bank_transactions.objects.filter(loan_id=id)
+    loan=loan_account.objects.get(id=id)
+    
+    print(loan.status)
 
     context={
         'cmp1':cmp1,
         'bnk':bnk,
-        'ids':id
+        'ids':id,
+        'loan':loan,
 
     }
     return render(request,'app1/loan_statement.html',context)
@@ -38790,17 +38860,17 @@ def loan_pdf(request,id):
     
     bnk=bank_transactions.objects.filter(loan_id=id)
 
-    bk=loan_account.objects.get(id=id)
-
+    loan=loan_account.objects.get(id=id)
     
     template_path = 'app1/loan_pdf.html'
     context={
         'cmp1':cmp1,
         'bnk':bnk,
-        'ids':id
+        'ids':id,
+        'loan':loan,
 
     }
-    fname=bk.account_name
+    fname=loan.account_name
    
     # Create a Django response object, and specify content_type as pdftemp_creditnote
     response = HttpResponse(content_type='application/pdf')
@@ -38823,3 +38893,15 @@ def loan_pdf(request,id):
 
 
 
+def active_status(request,id):
+    loan=loan_account.objects.get(id=id)
+    loan.status = 'Active'
+    loan.save()
+    return redirect('loan_statement',id)
+
+
+def inactive_status(request,id):
+    loan=loan_account.objects.get(id=id)
+    loan.status = 'In-Active'
+    loan.save()
+    return redirect('loan_statement',id)

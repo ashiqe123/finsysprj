@@ -901,7 +901,9 @@ urlpatterns = [
     path('edit_loan/<int:id>',views.edit_loan,name='edit_loan'),
     path('loan_trans/<int:id>',views.loan_trans,name='loan_trans'),
     path('crt_loan_trans/<int:id>',views.crt_loan_trans,name='crt_loan_trans'),
-    path('loan_pdf/<int:id>',views.loan_pdf,name='loan_pdf')
+    path('loan_pdf/<int:id>',views.loan_pdf,name='loan_pdf'),
+    path('active_status/<int:id>',views.active_status,name='active_status'),
+    path('inactive_status/<int:id>',views.inactive_status,name='inactive_status'),
 
 
 
