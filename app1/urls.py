@@ -904,6 +904,8 @@ urlpatterns = [
     path('loan_pdf/<int:id>',views.loan_pdf,name='loan_pdf'),
     path('active_status/<int:id>',views.active_status,name='active_status'),
     path('inactive_status/<int:id>',views.inactive_status,name='inactive_status'),
+    path('transactions_between_dates/', views.transactions_between_dates, name='transactions_between_dates'),
+
 
 
 

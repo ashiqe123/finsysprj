@@ -96,17 +96,22 @@
                                             <td>{{a.type}}</td>
                                             {% if a.type == 'LOAN ADJ' %}
                                             <td>{{a.loan_date}}</td>
-
+                                            {% elif a.type == 'LOAN APPROVED' %}
+                                            <td>{{a.loan_date}}</td>
                                             {% else %}
                                             <td>{{a.cash_date}}</td>
 
                                             {% endif %}
                                             {% if a.type == 'LOAN ADJ' %}
                                             <td>{{a.loan_desc}}</td>
+                                            {% elif a.type == 'LOAN APPROVED' %}
+                                            <td>{{a.loan_desc}}</td>
                                             {% else %}
                                             <td>{{a.cash_description}}</td>
                                             {% endif %}
                                             {% if a.type == 'LOAN ADJ' %}
+                                                <td>{{a.loan_amount }}</td>
+                                                {% elif a.type == 'LOAN APPROVED' %}
                                                 <td>{{a.loan_amount }}</td>
                                                 {% else %}
                                                 {% if a.cash_adjust == 'ADD CASH' %}
